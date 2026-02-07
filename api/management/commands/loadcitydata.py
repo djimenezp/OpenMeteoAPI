@@ -36,7 +36,7 @@ class Command(BaseCommand):
         except Exception as e:
             raise CommandError(str(e))
 
-        df = city_weather_info.pop("hourly_data")
+        df = city_weather_info.get("hourly_data")
 
         required_cols = {"date", "precipitation", "temperature_2m"}
         missing = required_cols - set(df.columns)
