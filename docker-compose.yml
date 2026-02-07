@@ -10,11 +10,27 @@ services:
     environment:
       - DJANGO_SETTINGS_MODULE=project.dev
       - SQLITE_PATH=/app/dbdata/db.sqlite3
+      - LOG_DIR=/app/log
     command: >
-      sh -c "mkdir -p /app/dbdata &&
-             if [ ! -f /app/dbdata/db.sqlite3 ]; then touch /app/dbdata/db.sqlite3; fi &&
+      sh -c "mkdir -p /app/dbdata /app/log &&
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8000"
+
+  test:
+    build: .
+    volumes:
+      - .:/app
+      - sqlite_data:/app/dbdata
+      - logs:/app/log
+    environment:
+      - DJANGO_SETTINGS_MODULE=project.dev
+      - SQLITE_PATH=/app/dbdata/db.sqlite3
+      - LOG_DIR=/app/log
+    command: >
+      sh -c "mkdir -p /app/dbdata /app/log &&
+             python manage.py migrate &&
+             python manage.py test"
+
 volumes:
   sqlite_data:
   logs:

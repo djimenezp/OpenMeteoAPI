@@ -5,13 +5,18 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# System deps (opcional pero útil para pandas)
+# (Opcional) si alguna dependencia necesitara compilación.
+# Normalmente pandas/requests vienen en wheel y no hace falta.
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Create non-root user
+RUN useradd -m appuser
+USER appuser
 
 COPY . /app/
 
