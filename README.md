@@ -5,6 +5,8 @@ Proyecto Django/DRF que:
 2) Expone endpoints REST para obtener estadísticas de temperatura, precipitación y un resumen global.
 3) Separa responsabilidades: `clients/` (Open-Meteo), `services/` (lógica), `api/` (DRF y modelos).
 
+El proyecto está preparado tanto para **desarrollo** como para **producción**, manteniendo entornos completamente separados.
+
 ---
 
 ## Stack
@@ -25,7 +27,10 @@ Proyecto Django/DRF que:
 - `services/`: lógica de negocio (queries, stats, exceptions).
 - `project/settings.py`: configuración base.
 - `project/dev.py`: overrides para desarrollo y Docker.
-- `Dockerfile`, `docker-compose.yml`: entorno containerizado.
+- `project/prod.py`: configuración de producción (sin afectar a dev)
+- `Dockerfile`: imagen base.
+- `docker-compose.yml`: entorno de desarrollo.
+- `docker-compose.prod.yml`: entorno de producción.
 
 Modelos principales:
 - `City`: ciudad (`name` + `country_code` únicos).
@@ -70,6 +75,37 @@ docker compose exec web python manage.py loadcitydata Madrid 2024-07-01 2024-07-
 ```bash
 docker compose exec web python manage.py createsuperuser
 ```
+
+---
+
+## Producción (Docker)
+
+El entorno de producción está completamente separado y **no modifica** ningún archivo de desarrollo.
+
+### Archivos específicos de producción
+- `requirements.prod.txt`
+- `project/prod_settings.py`
+- `docker-compose.prod.yml`
+
+### Variables de entorno requeridas
+En producción deben definirse, como mínimo:
+- `DJANGO_SECRET_KEY`
+- `DJANGO_ALLOWED_HOSTS`
+
+Opcionales:
+- `SQLITE_PATH`
+- `LOG_DIR`
+
+### Arrancar producción (ejemplo local)
+```bash
+DJANGO_SECRET_KEY=change-me DJANGO_ALLOWED_HOSTS=localhost \
+docker compose -f docker-compose.prod.yml up --build
+```
+
+Producción utiliza:
+- `gunicorn` como servidor WSGI
+- `whitenoise` para servir archivos estáticos
+- `collectstatic` automático en el arranque
 
 ---
 
@@ -142,10 +178,9 @@ http://localhost:8000/admin/
 
 ## Persistencia de datos
 
-- SQLite se almacena en un volumen Docker (`sqlite_data`).
-- Los logs se escriben en el volumen `logs`.
-
-Esto evita problemas de entorno y permite reiniciar contenedores sin perder datos.
+- SQLite se persiste mediante volúmenes Docker.
+- Los logs se escriben en un volumen independiente.
+- Los archivos estáticos se recopilan en producción en `/staticfiles`.
 
 ---
 
@@ -154,5 +189,6 @@ Esto evita problemas de entorno y permite reiniciar contenedores sin perder dato
 - Arquitectura en capas (`clients`, `services`, `api`).
 - Serializers DRF como contrato de entrada y salida.
 - Lógica de negocio aislada en `services`.
+- Entornos dev y prod completamente separados.
 - Docker como fuente única de verdad del entorno.
 - Tests deterministas sin dependencias de red.
