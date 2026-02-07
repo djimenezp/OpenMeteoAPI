@@ -1,0 +1,9 @@
+django
+djangorestframework
+django-cors-headers
+drf_yasg
+openmeteo-requests
+requests-cache
+retry-requests
+numpy
+pandas
