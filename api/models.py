@@ -55,8 +55,8 @@ class WeatherDataset(DefaultModel):
 class WeatherHour(DefaultModel):
     dataset = models.ForeignKey(WeatherDataset, related_name='hours', on_delete=models.CASCADE)
     timestamp = models.DateTimeField()
-    temperature = models.FloatField()
-    precipitation = models.FloatField()
+    temperature = models.FloatField(null=True)
+    precipitation = models.FloatField(null=True)
 
     def __str__(self):
         return f"{self.dataset} [{self.timestamp}]"
