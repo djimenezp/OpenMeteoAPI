@@ -63,7 +63,7 @@ def geocode(name, countryCode: str = None, language: str = 'EN', count: int = 10
         raise ValueError(f"City '{name}' not found.")
 
 
-def get_city_weather(city_name: str, start_data: str, end_date: str,country_iso:str=None) -> dict:
+def get_city_weather(city_name: str, start_date: str, end_date: str, country_iso:str=None) -> dict:
     city = geocode(city_name,country_iso)
     city_name = city.get("name") or city_name
     city_country = city.get("country") or ""
@@ -73,7 +73,7 @@ def get_city_weather(city_name: str, start_data: str, end_date: str,country_iso:
     timezone = city.get("timezone")
     if latitude is None or longitude is None:
         raise ValueError("Geocoding response missing latitude/longitude.")
-    df = archive(city['latitude'], city['longitude'], start_data, end_date)
+    df = archive(city['latitude'], city['longitude'], start_date, end_date)
     if df is None or df.empty:
         raise ValueError("No hourly data found for the given city and range.")
     weather_info = {
