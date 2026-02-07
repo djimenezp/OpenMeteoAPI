@@ -16,7 +16,6 @@ class City(DefaultModel):
     country_code = models.CharField(max_length=2)
     country = models.CharField(max_length=255)
     timezone = models.CharField(max_length=255)
-    data = models.JSONField(default=dict)
 
     def __str__(self):
         return self.name
@@ -38,6 +37,7 @@ class WeatherDataset(DefaultModel):
     end_date = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
     source = models.CharField(max_length=255)
+    data = models.JSONField(default=dict)
 
     def __str__(self):
         return f"{self.city} ({self.start_date} - {self.end_date})"

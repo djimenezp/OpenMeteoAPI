@@ -53,7 +53,7 @@ class Command(BaseCommand):
                 country=city_weather_info["country"],
                 latitude=city_weather_info["latitude"],
                 longitude=city_weather_info["longitude"],
-                data=data_json
+                timezone=city_weather_info["timezone"]
             )
             city_obj, _ = City.objects.get_or_create(
                 name=city_weather_info["city"],
@@ -65,7 +65,7 @@ class Command(BaseCommand):
                 city=city_obj,
                 start_date=start_date_str,
                 end_date=end_date_str,
-                defaults={"source": "open-meteo"},
+                defaults={"source": "open-meteo", "data": data_json},
             )
 
             if not created and replace:

@@ -8,7 +8,6 @@ class CityAdmin(admin.ModelAdmin):
     search_fields = ("name", "country", "country_code")
     list_filter = ("country_code", "timezone")
     ordering = ("name", "country_code")
-    readonly_fields = ("data",)  # JSON can be big
 
 
 @admin.register(WeatherDataset)
@@ -17,6 +16,7 @@ class WeatherDatasetAdmin(admin.ModelAdmin):
     search_fields = ("city__name", "city__country", "city__country_code")
     list_filter = ("city__country_code", "source", "start_date", "end_date")
     ordering = ("-created_at",)
+    readonly_fields = ("data",)  # JSON can be big
 
     def hours_count(self, obj):
         return obj.hours.count()
