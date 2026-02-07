@@ -148,7 +148,7 @@ def precipitation_stats(
         max_obj = None
 
     # average precipitation in the range: interpret as average daily precipitation
-    # (matches sample: average ~ total / number_of_days) :contentReference[oaicite:6]{index=6}
+    # (matches sample: average ~ total / number_of_days)
     num_days = max(1, len(total_by_day_series))
     avg = float(total / num_days)
 
@@ -169,7 +169,7 @@ def precipitation_stats(
 
 def summary_stats() -> Dict[str, Any]:
     """
-    Output matches PDF "global stats per city and range" format:
+    Output format:
     {
       "Madrid": {
         "start_date": "...",

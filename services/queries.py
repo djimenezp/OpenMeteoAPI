@@ -78,8 +78,7 @@ def _dataset_hours_to_df(dataset: WeatherDataset) -> pd.DataFrame:
     # Ensure timestamp is datetime, and keep timezone awareness
     df["timestamp"] = pd.to_datetime(df["timestamp"], utc=True)
 
-    # Day key: in the simplest version we use UTC day.
-    # If you want local day by city timezone later, convert here.
+    # Get YYYY-MM-DD string from timestamp, for easier grouping and plotting.
     df["date"] = df["timestamp"].dt.strftime("%Y-%m-%d")
 
     return df
