@@ -84,7 +84,7 @@ El entorno de producción está completamente separado y **no modifica** ningún
 
 ### Archivos específicos de producción
 - `requirements.prod.txt`
-- `project/prod_settings.py`
+- `project/prod.py`
 - `docker-compose.prod.yml`
 
 ### Variables de entorno requeridas
