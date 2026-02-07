@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import logging
 from datetime import date, datetime
-from typing import Optional
+from typing import Optional, Tuple
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
@@ -30,7 +30,7 @@ class Command(BaseCommand):
         replace: bool = bool(options["replace"])
 
         # Validate date imput
-        self._validate_date_range(start_date_str, end_date_str)
+        start_d, end_d = self._validate_date_range(start_date_str, end_date_str)
         try:
             city_weather_info = get_city_weather(city_query, start_date_str, end_date_str, country)
         except Exception as e:
@@ -63,8 +63,8 @@ class Command(BaseCommand):
 
             dataset, created = WeatherDataset.objects.get_or_create(
                 city=city_obj,
-                start_date=start_date_str,
-                end_date=end_date_str,
+                start_date=start_d,
+                end_date=end_d,
                 defaults={"source": "open-meteo", "data": data_json},
             )
 
@@ -114,7 +114,7 @@ class Command(BaseCommand):
         except ValueError:
             raise CommandError(f"{field_name} must be YYYY-MM-DD (got '{value}').")
 
-    def _validate_date_range(self, start_date_str: str, end_date_str: str) -> None:
+    def _validate_date_range(self, start_date_str: str, end_date_str: str) -> Tuple[date, date]:
         start_d = self._parse_date(start_date_str, "start_date")
         end_d = self._parse_date(end_date_str, "end_date")
         if start_d > end_d:
@@ -124,6 +124,7 @@ class Command(BaseCommand):
         # Requirement: always in the past (end date must be < today)
         if end_d >= today:
             raise CommandError(f"end_date must be in the past (today is {today.isoformat()}).")
+        return start_d, end_d
 
     @staticmethod
     def _ensure_aware_utc(dt):
