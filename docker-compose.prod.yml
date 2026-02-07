@@ -1,0 +1,26 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - sqlite_data:/app/dbdata
+      - logs:/app/log
+      - staticfiles:/app/staticfiles
+    environment:
+      - DJANGO_SETTINGS_MODULE=project.prod
+      - SQLITE_PATH=/app/dbdata/db.sqlite3
+      - LOG_DIR=/app/log
+      - DJANGO_SECRET_KEY=change-me
+      - DJANGO_ALLOWED_HOSTS=localhost
+    command: >
+      sh -c "mkdir -p /app/dbdata /app/log /app/staticfiles &&
+             python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             gunicorn project.wsgi:application --bind 0.0.0.0:8000 --workers 2 --threads 4 --timeout 60"
+volumes:
+  sqlite_data:
+  logs:
+  staticfiles:
