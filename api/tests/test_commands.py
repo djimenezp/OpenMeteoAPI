@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone as pytimezone
 from unittest.mock import patch
 
 import pandas as pd
-from django.core.management import call_command
+from django.core.management import call_command, CommandError
 from django.test import TestCase
 from django.utils import timezone
 
@@ -28,6 +28,21 @@ class TestLoadCityDataCommand(TestCase):
         today = timezone.localdate()
         self.start_date = (today - timedelta(days=10)).isoformat()
         self.end_date = (today - timedelta(days=8)).isoformat()
+
+    @patch("api.management.commands.loadcitydata.get_city_weather")
+    def test_command_rejects_rejects_missing_arguments(self, _):  # mock is unused implemented to avoid real API calls
+        with self.assertRaisesRegex(CommandError, "arguments are required"):
+            call_command("loadcitydata")
+
+    @patch("api.management.commands.loadcitydata.get_city_weather")
+    def test_command_rejects_rejects_start_after_end(self, _):  # mock is unused implemented to avoid real API calls
+        with self.assertRaisesRegex(CommandError, "start_date must be <= end_date"):
+            call_command("loadcitydata", "Madrid", timezone.localdate().isoformat(), self.end_date)
+
+    @patch("api.management.commands.loadcitydata.get_city_weather")
+    def test_command_rejects_end_date_not_in_past(self, _):  # mock is unused but implemented to avoid real API calls
+        with self.assertRaisesRegex(CommandError, "end_date must be in the past"):
+            call_command("loadcitydata", "Madrid", self.start_date, timezone.localdate().isoformat())
 
     @patch("api.management.commands.loadcitydata.get_city_weather")
     def test_command_creates_city_dataset_and_hours(self, mock_get_city_weather):
