@@ -21,3 +21,23 @@ DATABASES = {
 
 # Optional: slightly louder logs in dev
 LOGGING["loggers"]['app']['level'] = "DEBUG"
+
+DEBUG_TOOLBAR_CONFIG = {
+    "SHOW_TOOLBAR_CALLBACK": lambda request: True,
+    'RESULTS_CACHE_SIZE': 3,
+    'SHOW_COLLAPSED': False,
+    'INTERCEPT_REDIRECTS': False,
+    'PRETTIFY_SQL': False,
+}
+
+DEBUG_TOOLBAR_PANELS = [
+    'debug_toolbar.panels.timer.TimerPanel',
+    'debug_toolbar.panels.sql.SQLPanel',
+]
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    "localhost",
+    "david-laptop"
+    # ...
+]

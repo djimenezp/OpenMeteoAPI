@@ -1,5 +1,6 @@
 django
 djangorestframework
+django-debug-toolbar
 django-cors-headers
 drf_yasg
 openmeteo-requests
