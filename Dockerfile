@@ -25,11 +25,11 @@ RUN if [ "$REQUIREMENTS" = "prod" ]; then \
       pip install --no-cache-dir -r /app/requirements.txt ; \
     fi
 
-# Crear usuario non-root
-RUN useradd -m appuser
-USER appuser
-
 COPY . /app/
+
+# Entrypoint prepares runtime folders (log/db/static)
+RUN chmod +x /app/entrypoint.sh
+ENTRYPOINT ["/app/entrypoint.sh"]
 
 EXPOSE 8000
 
