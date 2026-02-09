@@ -141,6 +141,6 @@ LOGGING = {
     "loggers": {
         "": {"handlers": ["console", "root.log", "mail_admins"], "level": "INFO", "propagate": True},
         "django": {"handlers": ["console", "django.log", "mail_admins"], "level": "INFO", "propagate": False},
-        "core": {"handlers": ["console", "app.log", "mail_admins"], "level": "DEBUG", "propagate": False}
+        "app": {"handlers": ["console", "app.log", "mail_admins"], "level": "DEBUG", "propagate": False}
     },
 }
