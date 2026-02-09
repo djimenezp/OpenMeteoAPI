@@ -16,17 +16,13 @@ class _BaseCityRangeQuerySerializer(serializers.Serializer):
     def validate(self, attrs):
         start = attrs["start_date"]
         end = attrs["end_date"]
-
         if start > end:
             raise serializers.ValidationError("start_date must be <= end_date.")
-
         today = timezone.localdate()
         # Requirement: always in the past
         if end >= today:
             raise serializers.ValidationError(
-                {"end_date": f"end_date must be in the past (today is {today.isoformat()})."}
-            )
-
+                {"end_date": f"end_date must be in the past (today is {today.isoformat()})."})
         return attrs
 
 
@@ -41,7 +37,6 @@ class TemperatureStatsQuerySerializer(_BaseCityRangeQuerySerializer):
         below = attrs["below"]
         if above < below:
             raise serializers.ValidationError("above must be >= below.")
-
         return attrs
 
 

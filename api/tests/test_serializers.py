@@ -45,7 +45,6 @@ class TestInputSerializers(SimpleTestCase):
         }
         s = TemperatureStatsQuerySerializer(data=payload)
         self.assertFalse(s.is_valid())
-        # could be non_field_errors depending on your validate()
         self.assertTrue("non_field_errors" in s.errors or "start_date" in s.errors)
 
     def test_temperature_query_rejects_above_below_inverted(self):
@@ -104,6 +103,7 @@ class TestOutputSerializers(SimpleTestCase):
         s = TemperatureStatsResponseSerializer(data=payload)
         self.assertFalse(s.is_valid())
         self.assertIn("temperature", s.errors)
+        self.assertIn("hours_below_threshold", s.errors['temperature'])
 
     def test_precipitation_output_contract_valid(self):
         payload = {
@@ -155,3 +155,6 @@ class TestOutputSerializers(SimpleTestCase):
         self.assertFalse(s.is_valid())
         # error should be under "data" or top-level depending on your implementation
         self.assertTrue(bool(s.errors))
+        self.assertIn("data", s.errors)
+        self.assertIn("Madrid (2024-07-01..2024-07-03)", s.errors['data'])
+        self.assertIn("precipitation_max", s.errors['data']["Madrid (2024-07-01..2024-07-03)"])
