@@ -20,6 +20,4 @@ DATABASES = {
 }
 
 # Optional: slightly louder logs in dev
-LOGGING["loggers"]['']['level'] = "DEBUG"
-LOGGING["loggers"]['django']['level'] = "DEBUG"
 LOGGING["loggers"]['app']['level'] = "DEBUG"
