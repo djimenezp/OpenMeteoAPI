@@ -42,7 +42,6 @@ def get_dataset_or_raise(*, city_name: str, start_date: Any, end_date: Any) -> W
     _validate_past_range(start_d, end_d)
 
     # Basic city lookup: name match.
-    # If you later want to support country_code disambiguation, add it here.
     city = City.objects.filter(name__iexact=city_name).first()
     if not city:
         raise DatasetNotFound(f"City '{city_name}' not found in DB. Load it first.")
