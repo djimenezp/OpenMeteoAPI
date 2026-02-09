@@ -11,10 +11,21 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt /app/
-RUN pip install --no-cache-dir -r requirements.txt
+# Selector de requirements (dev/prod)
+ARG REQUIREMENTS=dev
 
-# Create non-root user
+# Copiamos ambos ficheros para poder elegir en build-time
+COPY requirements.txt /app/requirements.txt
+COPY requirements.prod.txt /app/requirements.prod.txt
+
+# Instala según entorno
+RUN if [ "$REQUIREMENTS" = "prod" ]; then \
+      pip install --no-cache-dir -r /app/requirements.prod.txt ; \
+    else \
+      pip install --no-cache-dir -r /app/requirements.txt ; \
+    fi
+
+# Crear usuario non-root
 RUN useradd -m appuser
 USER appuser
 
