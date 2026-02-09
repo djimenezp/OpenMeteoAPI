@@ -19,8 +19,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "rest_framework",
-    "api.apps.ApiConfig",
     "debug_toolbar",
+    "drf_yasg",
+    "api.apps.ApiConfig",
 ]
 
 MIDDLEWARE = [
