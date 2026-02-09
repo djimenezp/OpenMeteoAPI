@@ -8,9 +8,8 @@ from api.serializers import (
     TemperatureStatsResponseSerializer,
     PrecipitationStatsResponseSerializer,
 )
-
-from services.stats import temperature_stats, precipitation_stats
 from services.exceptions import DatasetNotFound
+from services.stats import temperature_stats, precipitation_stats
 
 
 class TestServicesStats(TestCase):
@@ -71,12 +70,24 @@ class TestServicesStats(TestCase):
             for ts, temp, prec in points
         ])
 
-    def test_temperature_stats_dataset_not_found(self):
-        with self.assertRaises(DatasetNotFound):
+    def test_temperature_stats_dataset_not_found_by_city(self):
+        with self.assertRaisesRegex(DatasetNotFound, "City 'Sevilla' not found in DB"):
             temperature_stats(
                 city_name="Sevilla",
                 start_date=self.start_date,
                 end_date=self.end_date,
+                above=30,
+                below=0,
+            )
+
+    def test_temperature_stats_dataset_not_found_by_dataset(self):
+        with self.assertRaisesRegex(DatasetNotFound,
+                                    "No dataset found for city='Madrid' start_date='2026-01-23' end_date='2026-01-27'"):
+            # Different date range, no dataset for these dates
+            temperature_stats(
+                city_name="Madrid",
+                start_date=self.start_date - timedelta(days=7),
+                end_date=self.end_date - timedelta(days=5),
                 above=30,
                 below=0,
             )
