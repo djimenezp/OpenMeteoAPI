@@ -79,7 +79,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Logging (file-friendly for Docker)
 # -------------------------
 LOG_ROOT = Path(os.environ.get("LOG_DIR", str(BASE_DIR / "log")))
-LOG_ROOT.mkdir(exist_ok=True, parents=True)
 
 LOGGING = {
     "version": 1,
