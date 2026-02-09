@@ -71,7 +71,8 @@ class TestServicesStats(TestCase):
         ])
 
     def test_temperature_stats_dataset_not_found_by_city(self):
-        with self.assertRaisesRegex(DatasetNotFound, "City 'Sevilla' not found in DB"):
+        with self.assertRaisesRegex(
+                DatasetNotFound, "No dataset found for city='Sevilla' start_date='2026-01-30' end_date='2026-02-01'"):
             temperature_stats(
                 city_name="Sevilla",
                 start_date=self.start_date,
@@ -81,8 +82,8 @@ class TestServicesStats(TestCase):
             )
 
     def test_temperature_stats_dataset_not_found_by_dataset(self):
-        with self.assertRaisesRegex(DatasetNotFound,
-                                    "No dataset found for city='Madrid' start_date='2026-01-23' end_date='2026-01-27'"):
+        with self.assertRaisesRegex(
+                DatasetNotFound, "No dataset found for city='Madrid' start_date='2026-01-23' end_date='2026-01-27'"):
             # Different date range, no dataset for these dates
             temperature_stats(
                 city_name="Madrid",

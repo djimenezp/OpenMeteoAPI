@@ -41,15 +41,10 @@ def get_dataset_or_raise(*, city_name: str, start_date: Any, end_date: Any) -> W
     end_d = _parse_date(end_date)
     _validate_past_range(start_d, end_d)
 
-    # Basic city lookup: name match.
-    city = City.objects.filter(name__iexact=city_name).first()
-    if not city:
-        raise DatasetNotFound(f"City '{city_name}' not found in DB. Load it first.")
-
-    dataset = WeatherDataset.objects.filter(city=city, start_date=start_d, end_date=end_d).first()
+    dataset = WeatherDataset.objects.select_related('city').filter(city__name__iexact=city_name, start_date=start_d, end_date=end_d).first()
     if not dataset:
         raise DatasetNotFound(
-            f"No dataset found for city='{city.name}' start_date='{start_d}' end_date='{end_d}'. "
+            f"No dataset found for city='{city_name}' start_date='{start_d}' end_date='{end_d}'. "
             "Run: python manage.py loadcitydata <city> <start> <end> --replace"
         )
 
