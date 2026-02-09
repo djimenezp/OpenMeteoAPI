@@ -51,13 +51,13 @@ class Command(BaseCommand):
         with transaction.atomic():
             defaults = dict(
                 country=city_weather_info["country"],
-                latitude=city_weather_info["latitude"],
-                longitude=city_weather_info["longitude"],
                 timezone=city_weather_info["timezone"]
             )
             city_obj, _ = City.objects.get_or_create(
                 name=city_weather_info["city"],
                 country_code=city_weather_info["country_iso"],
+                latitude=city_weather_info["latitude"],
+                longitude=city_weather_info["longitude"],
                 defaults=defaults,
             )
 
