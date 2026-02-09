@@ -60,7 +60,7 @@ def geocode(name, countryCode: str = None, language: str = 'EN', count: int = 10
         response = response.json()
         return response["results"][0]
     except Exception:
-        raise ValueError(f"City '{name}' not found.")
+        raise ValueError(f"City '{name}' not found for country code '{countryCode}'.")
 
 
 def get_city_weather(city_name: str, start_date: str, end_date: str, country_iso:str=None) -> dict:
