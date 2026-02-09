@@ -1,6 +1,10 @@
 services:
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        REQUIREMENTS: dev
     ports:
       - "8000:8000"
     volumes:
@@ -11,13 +15,18 @@ services:
       - DJANGO_SETTINGS_MODULE=project.dev
       - SQLITE_PATH=/app/dbdata/db.sqlite3
       - LOG_DIR=/app/log
+      - DJANGO_DEBUG=1
+      - DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost
     command: >
-      sh -c "mkdir -p /app/dbdata /app/log &&
-             python manage.py migrate &&
+      sh -c "python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8000"
 
   test:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        REQUIREMENTS: dev
     volumes:
       - .:/app
       - sqlite_data:/app/dbdata
@@ -26,9 +35,10 @@ services:
       - DJANGO_SETTINGS_MODULE=project.dev
       - SQLITE_PATH=/app/dbdata/db.sqlite3
       - LOG_DIR=/app/log
+      - DJANGO_DEBUG=1
+      - DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost
     command: >
-      sh -c "mkdir -p /app/dbdata /app/log &&
-             python manage.py migrate &&
+      sh -c "python manage.py migrate &&
              python manage.py test"
 
 volumes:
