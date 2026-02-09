@@ -7,6 +7,24 @@ from rest_framework.test import APIClient
 from api.models import City, WeatherDataset, WeatherHour
 
 
+def _insert_dataset(city, start_date, end_date):
+    dataset = WeatherDataset.objects.create(
+        city=city,
+        start_date=start_date,
+        end_date=end_date,
+        source="open-meteo",
+    )
+
+    base_dt = datetime(
+        start_date.year, start_date.month, start_date.day, 10, 0, 0,
+        tzinfo=pytimezone.utc
+    )
+    WeatherHour.objects.bulk_create([
+        WeatherHour(dataset=dataset, timestamp=base_dt + timedelta(hours=0), temperature=10.0, precipitation=0.0),
+        WeatherHour(dataset=dataset, timestamp=base_dt + timedelta(hours=1), temperature=20.0, precipitation=1.0),
+    ])
+
+
 class TestWeatherViews(TestCase):
     def setUp(self):
         self.client = APIClient()
@@ -65,21 +83,7 @@ class TestWeatherViews(TestCase):
         self.assertIn("detail", body)
 
     def test_temperature_ok_returns_200_and_shape(self):
-        dataset = WeatherDataset.objects.create(
-            city=self.city,
-            start_date=self.start_date,
-            end_date=self.end_date,
-            source="open-meteo",
-        )
-
-        base_dt = datetime(
-            self.start_date.year, self.start_date.month, self.start_date.day, 10, 0, 0,
-            tzinfo=pytimezone.utc
-        )
-        WeatherHour.objects.bulk_create([
-            WeatherHour(dataset=dataset, timestamp=base_dt + timedelta(hours=0), temperature=10.0, precipitation=0.0),
-            WeatherHour(dataset=dataset, timestamp=base_dt + timedelta(hours=1), temperature=20.0, precipitation=1.0),
-        ])
+        _insert_dataset(self.city, self.start_date, self.end_date)
 
         resp = self.client.get(
             "/api/weather/temperature/",
@@ -131,21 +135,7 @@ class TestWeatherViews(TestCase):
         self.assertIn("detail", body)
 
     def test_precipitation_ok_returns_200_and_shape(self):
-        dataset = WeatherDataset.objects.create(
-            city=self.city,
-            start_date=self.start_date,
-            end_date=self.end_date,
-            source="open-meteo",
-        )
-
-        base_dt = datetime(
-            self.start_date.year, self.start_date.month, self.start_date.day, 10, 0, 0,
-            tzinfo=pytimezone.utc
-        )
-        WeatherHour.objects.bulk_create([
-            WeatherHour(dataset=dataset, timestamp=base_dt + timedelta(hours=0), temperature=10.0, precipitation=0.0),
-            WeatherHour(dataset=dataset, timestamp=base_dt + timedelta(hours=1), temperature=20.0, precipitation=1.0),
-        ])
+        _insert_dataset(self.city, self.start_date, self.end_date)
 
         resp = self.client.get(
             "/api/weather/precipitation/",
@@ -178,21 +168,7 @@ class TestWeatherViews(TestCase):
         self.assertIsInstance(body, dict)
 
     def test_summary_returns_data_when_dataset_exists(self):
-        dataset = WeatherDataset.objects.create(
-            city=self.city,
-            start_date=self.start_date,
-            end_date=self.end_date,
-            source="open-meteo",
-        )
-
-        base_dt = datetime(
-            self.start_date.year, self.start_date.month, self.start_date.day, 10, 0, 0,
-            tzinfo=pytimezone.utc
-        )
-        WeatherHour.objects.bulk_create([
-            WeatherHour(dataset=dataset, timestamp=base_dt + timedelta(hours=0), temperature=10.0, precipitation=0.0),
-            WeatherHour(dataset=dataset, timestamp=base_dt + timedelta(hours=1), temperature=20.0, precipitation=1.0),
-        ])
+        _insert_dataset(self.city, self.start_date, self.end_date)
 
         resp = self.client.get("/api/weather/summary/")
         self.assertEqual(resp.status_code, 200)
